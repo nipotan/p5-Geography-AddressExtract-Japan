@@ -11,7 +11,7 @@ __PACKAGE__->mk_accessors( qw(opt regexp map addresses) );
 
 use Geography::AddressExtract::Japan::Address;
 
-our $VERSION = '0.00_02';
+our $VERSION = '0.00_03';
 
 sub new {
     my($class, %opt) = @_;

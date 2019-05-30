@@ -4,6 +4,6 @@ Build
 inc/
 pm_to_blib
 MYMETA.*
-/Number-Phone-JP-*
+/Geography-AddressExtract-Japan-*
 !META.json
 _build

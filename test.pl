@@ -2,10 +2,14 @@ use strict;
 use warnings;
 use lib 'lib';
 use utf8;
+use Encode;
+use Test::More;
 
 use Data::Dumper;
 use Geography::AddressExtract::Japan;
 
+my @expects = map { eval $_ } <DATA>;
+plan tests => scalar(@expects) * keys %{$expects[0]};
 
 my $ex  = Geography::AddressExtract::Japan->extract('今年は渋谷区原宿のタイフェスティバル行って神奈川県鎌倉市鎌倉にいった
 住所は東京都港区六本木6-15-21　
@@ -105,8 +109,76 @@ osakashi.yuc.jp/search/search.php?genre_code=6 - 24k - キャッシュ - 関連�
 
 #print Dumper($ex);
 
-for (@$ex) {
-    print "[$_]  - {" . $_->match_text . "}\n";
-    print "    I:" . $_->index . " CITY: " . $_->city . " / Aza: " . $_->aza . " / NUMBER: " . $_->number . "\n";
-    print "\n";
+for my $extract (@$ex) {
+    my $test_prefix = "[$extract] - {" . $extract->match_text . "}";
+    my $expect = shift @expects;
+    for my $method (keys %$expect) {
+        my $test_name = sprintf '%s %s(): %s', $test_prefix, $method, $extract->$method;
+        is($extract->$method, $expect->{$method}, encode('utf-8', $test_name));
+    }
 }
+
+__DATA__
+{index => '3', city => '渋谷区', aza => '原宿',number => ''},
+{index => '21', city => '神奈川県鎌倉市', aza => '鎌倉',number => ''},
+{index => '38', city => '東京都港区', aza => '六本木', number => '6-15-21'},
+{index => '55', city => '東京都港区', aza => '本木', number => '6-15-21'},
+{index => '72', city => '大阪市', aza => '道頓堀', number => '一丁目東１番'},
+{index => '85', city => '札幌市', aza => '上町', number => 'Ａ番７号'},
+{index => '97', city => '札幌市', aza => '浜', number => '５−南１−２１'},
+{index => '113', city => '札幌市', aza => '５条通', number => '１１丁目右１号'},
+{index => '130', city => '札幌市', aza => '神町営団大通り', number => '４７号'},
+{index => '144', city => '札幌市', aza => '太田', number => '５'},
+{index => '159', city => '札幌市', aza => '',number => ''},
+{index => '171', city => '札幌市', aza => '一丁目',number => ''},
+{index => '178', city => '札幌市', aza => '一丁目', number => '87'},
+{index => '187', city => '札幌市', aza => '一丁目', number => '776-89'},
+{index => '200', city => '札幌市', aza => '壱丁目', number => '2-3'},
+{index => '212', city => '札幌市', aza => '稲田町南9線', number => '西11-1'},
+{index => '227', city => '渋谷区', aza => '原宿',number => ''},
+{index => '235', city => '東京都渋谷区', aza => '神宮前',number => ''},
+{index => '270', city => '東京都', aza => '',number => ''},
+{index => '276', city => '渋谷区', aza => '神宮前',number => ''},
+{index => '285', city => '東京都渋谷区', aza => '神宮前',number => ''},
+{index => '490', city => '神奈川県横浜市緑区', aza => '小山町',number => ''},
+{index => '528', city => '神奈川県', aza => '',number => ''},
+{index => '535', city => '横浜市緑区', aza => '小山町',number => ''},
+{index => '546', city => '神奈川県横浜市緑区', aza => '小山町',number => ''},
+{index => '746', city => '千葉県千葉市緑区', aza => '小山町',number => ''},
+{index => '787', city => '千葉県', aza => '',number => ''},
+{index => '793', city => '千葉市緑区', aza => '小山町',number => ''},
+{index => '804', city => '千葉県千葉市緑区', aza => '小山町',number => ''},
+{index => '1014', city => '京都市中京区', aza => '新京極六角東入る', number => '452-4'},
+{index => '1415', city => '京都市中京区', aza => '衣柵通御池上ル下妙覚寺町', number => '199'},
+{index => '1825', city => '京都府京都市左京区', aza => '北白川上別当', number => '３−６'},
+{index => '2227', city => '東京都目黒区', aza => '自由が丘', number => '2−10−22'},
+{index => '2296', city => '京都府京都市下京区', aza => '四条通東洞院角',number => ''},
+{index => '2422', city => '大阪府', aza => '',number => ''},
+{index => '2428', city => '大阪市', aza => '',number => ''},
+{index => '2459', city => '大阪府大阪市此花区', aza => '島屋', number => '6-2-61'},
+{index => '2558', city => '大阪府大阪市中央区', aza => '',number => ''},
+{index => '2786', city => '大阪市', aza => '',number => ''},
+{index => '2883', city => '大阪市', aza => '',number => ''},
+{index => '3153', city => '大阪市', aza => '',number => ''},
+{index => '3228', city => '大阪市', aza => '',number => ''},
+{index => '3240', city => '大阪市', aza => '',number => ''},
+{index => '3255', city => '大阪市', aza => '道頓堀', number => '2-4-2'},
+{index => '3275', city => '大阪市', aza => '道頓堀', number => '2-4-2'},
+{index => '3388', city => '大阪市', aza => '道頓堀', number => '二の四の二'},
+{index => '3406', city => '東京都目黒区', aza => '自由が丘', number => '一-三-四〇九'},
+{index => '3425', city => '神戸市', aza => '',number => ''},
+{index => '3452', city => '千葉県市川市', aza => '役所',number => ''},
+{index => '3461', city => '千葉県船橋市', aza => '消防局',number => ''},
+{index => '3475', city => '福岡市', aza => '嘘5地割',number => ''},
+{index => '3484', city => '旭市', aza => '',number => ''},
+{index => '3497', city => '旭市', aza => '',number => ''},
+{index => '3516', city => '江戸川区', aza => '葛西', number => '2-3-0921'},
+{index => '3531', city => '江戸川区', aza => '葛西', number => '2の3の四〇九四〇九'},
+{index => '3548', city => '江戸川区', aza => '葛西', number => '2の九番四〇九四〇号'},
+{index => '3565', city => '江戸川区', aza => '葛西', number => '2の九番地四〇九四〇号'},
+{index => '3584', city => '静岡県伊豆の国市', aza => '',number => ''},
+{index => '3608', city => '静岡県伊豆の国市', aza => '',number => ''},
+{index => '3640', city => '東京都新宿区', aza => '西新宿', number => '2−6−1'},
+{index => '3665', city => '金沢市', aza => '吉原町',number => ''},
+{index => '3677', city => '大和市', aza => '嘘町にある', number => '10'},
+{index => '3690', city => '東京都新宿区', aza => '新宿', number => '754-1'},

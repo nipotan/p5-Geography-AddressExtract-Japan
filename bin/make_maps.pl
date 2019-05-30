@@ -29,7 +29,7 @@ while (! $io->eof and my $col = $csv->getline($io)) {
     my $data = $col->[6] . $col->[7];
 
     my @kana;
-    if ($col->[6] ne '京都府' && $col->[8] !~ /^以下に掲が/ && ($col->[8] =~ /^[\p{Hiragana}\p{Katakana}]/ || $col->[8] =~ /、/)) {
+    if ($col->[6] ne '京都府' && $col->[8] !~ /^以下に掲載が/ && ($col->[8] =~ /^[\p{Hiragana}\p{Katakana}]/ || $col->[8] =~ /、/)) {
         my $aza = $col->[8];
         $aza =~ s/（//;
         for my $str (split /、/, $aza) {
